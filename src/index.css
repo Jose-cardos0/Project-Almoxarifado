@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.invalido {
+  border-bottom: 1px solid red;
+}
