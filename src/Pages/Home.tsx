@@ -33,28 +33,25 @@ const Home = () => {
     quantidade: number;
   }
 
-  useEffect(() => {
-    function getData() {
-      const linksRef = collection(db, "produtos");
-      const queryRef = query(linksRef);
+  async function getData() {
+    const linksRef = collection(db, "produtos");
+    const queryRef = query(linksRef);
 
-      getDocs(queryRef).then((snapshot) => {
-        let lista = [] as ProdutosProps[];
+    await getDocs(queryRef).then((snapshot) => {
+      let lista = [] as ProdutosProps[];
 
-        snapshot.forEach((doc) => {
-          lista.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            desc: doc.data().desc,
-            quantidade: doc.data().quantidade,
-          });
+      snapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          nome: doc.data().nome,
+          desc: doc.data().desc,
+          quantidade: doc.data().quantidade,
         });
-
-        setData(lista);
       });
-    }
-    getData();
-  }, [data]);
+
+      setData(lista);
+    });
+  }
 
   function handlesubmit(e: FormEvent) {
     e.preventDefault();
@@ -72,6 +69,8 @@ const Home = () => {
       desc: desc,
       quantidade: quantidade,
     });
+
+    getData();
   }
 
   function handleEdit(item: ProdutosProps) {
@@ -90,6 +89,7 @@ const Home = () => {
     });
 
     setDataId("");
+    getData();
   }
 
   return (
