@@ -27,12 +27,12 @@ const Headers = () => {
         >
           Home
         </Link>
-        {/* <Link
-          to={"/login"}
+        <Link
+          to={"/funcionarios"}
           className="text-white font-light text-xs hover:text-gray-500"
         >
-          Login
-        </Link> */}
+          Reg. Funcionário
+        </Link>
         <button
           onClick={() => {
             signOut(auth);
