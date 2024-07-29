@@ -64,7 +64,7 @@ const Login = () => {
           className="flex flex-col mt-4 w-full justify-center items-center "
         >
           <label className="w-full">
-            <span className="text-white">Login</span> <br />
+            <span className="text-black font-bold">Login</span> <br />
             <input
               type="text"
               placeholder="Enter your username"
@@ -75,7 +75,7 @@ const Login = () => {
             />
           </label>
           <label className="w-full">
-            <span className="text-white">Password:</span> <br />
+            <span className="text-black font-bold">Password:</span> <br />
             <input
               type="password"
               placeholder="Enter your password"
