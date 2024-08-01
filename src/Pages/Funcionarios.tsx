@@ -68,30 +68,25 @@ const Funcionarios = () => {
     await uploadBytes(imagemRef, fileImg);
     const imagemUrl = await getDownloadURL(imagemRef);
 
-    try {
-      await addDoc(collection(db, "Funcionario"), {
-        nomeFunc: nomeFunc,
-        cargoFunc: cargoFunc,
-        imagem: imagemUrl,
-        contatoFunc: contatoFunc,
-        emailFunc: emailFunc,
-        sexoF: sexoF,
-        sexoM: sexoM,
-        ativo: ativoFunc,
-        inativo: inativoFunc,
-        demissao: demissao,
+    await addDoc(collection(db, "Funcionario"), {
+      nomeFunc: nomeFunc,
+      cargoFunc: cargoFunc,
+      imagem: imagemUrl,
+      contatoFunc: contatoFunc,
+      emailFunc: emailFunc,
+      sexoF: sexoF,
+      sexoM: sexoM,
+      ativo: ativoFunc,
+      inativo: inativoFunc,
+      demissao: demissao,
+    })
+      .then(() => {
+        toast.success("Funcionário registrado com sucesso!");
       })
-        .then(() => {
-          toast.success("Funcionário registrado com sucesso!");
-        })
-        .catch((error) => {
-          toast.error("Erro ao registrar funcionário!");
-          console.log(error);
-        });
-    } catch (err) {
-      console.log(err);
-      toast.warn("Ops, algo deu errado.");
-    }
+      .catch((error) => {
+        toast.error("Erro ao registrar funcionário!");
+        console.log(error);
+      });
   }
 
   return (
