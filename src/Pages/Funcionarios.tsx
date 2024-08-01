@@ -1,12 +1,40 @@
 import React, { FormEvent, useState } from "react";
 
+//firebase
+import { db, storage } from "../FireBase/FireBase";
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+//toast
+import { toast } from "react-toastify";
+
 const Funcionarios = () => {
   const [ativo, setAtivo] = useState(true);
   const [imagem, setImagem] = useState<string | null>(null);
 
+  //inputs
+  const [nomeFunc, setNomeFunc] = useState<string>();
+  const [fileImg, setFileImg] = useState<any>();
+  const [dataAdmisao, setDataAdmisao] = useState<string>();
+  const [cargoFunc, setCargo] = useState<string>();
+  const [ativoFunc, setAtivoFunc] = useState<boolean | string>("ativo");
+  const [inativoFunc, setInativoFunc] = useState<boolean | string>("inativo");
+  const [contatoFunc, setContatoFunc] = useState<string>();
+  const [emailFunc, setEmailFunc] = useState<string>();
+  const [sexoF, setSexoF] = useState<string>("Feminino");
+  const [sexoM, setSexoM] = useState<string>("Masculino");
+  const [demissao, setDemissao] = useState("");
+
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setAtivo(value === "ativo");
+    if (ativo === false) {
+      setInativoFunc(true);
+      setAtivoFunc(false);
+    } else if (ativo === true) {
+      setInativoFunc(false);
+      setAtivoFunc(true);
+    }
   };
 
   const handleImagemChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,21 +53,68 @@ const Funcionarios = () => {
     setImagem(null);
   };
 
+  async function handleFuncionarioSubmit(e: FormEvent) {
+    e.preventDefault();
+    setNomeFunc("");
+    setFileImg("");
+    setDataAdmisao("");
+    setCargo("");
+    setDemissao("");
+    setContatoFunc("");
+    setEmailFunc("");
+    setImagem(null);
+
+    const imagemRef = ref(storage, `imagens/${fileImg.name}`);
+    await uploadBytes(imagemRef, fileImg);
+    const imagemUrl = await getDownloadURL(imagemRef);
+
+    try {
+      await addDoc(collection(db, "Funcionario"), {
+        nomeFunc: nomeFunc,
+        cargoFunc: cargoFunc,
+        imagem: imagemUrl,
+        contatoFunc: contatoFunc,
+        emailFunc: emailFunc,
+        sexoF: sexoF,
+        sexoM: sexoM,
+        ativo: ativoFunc,
+        inativo: inativoFunc,
+        demissao: demissao,
+      })
+        .then(() => {
+          toast.success("Funcionário registrado com sucesso!");
+        })
+        .catch((error) => {
+          toast.error("Erro ao registrar funcionário!");
+          console.log(error);
+        });
+    } catch (err) {
+      console.log(err);
+      toast.warn("Ops, algo deu errado.");
+    }
+  }
+
   return (
-    <div className="flex flex-col h-screen w-screen">
-      <div className="flex flex-col h-auto w-3/6 m-auto items-center justify-center p-8 bg-blue-50">
+    <div className="flex justify-center items-center flex-col min-h-screen w-screen overflow-hidden">
+      <div className="flex flex-col h-auto w-3/6 m-auto items-center justify-center p-8 bg-blue-50 shadow-lg">
         <h1 className="font-bold border-solid border-b-2 mb-2">
           Painel de registro
         </h1>
         <div className="flex flex-col w-9/12">
-          <form className="flex flex-col w-full ">
+          <form
+            onSubmit={handleFuncionarioSubmit}
+            className="flex flex-col w-full "
+          >
             <div className="flex items-center justify-center gap-5">
               <label className="w-full">
                 Nome:
                 <input
                   className="border-solid border-b-2 outline-none w-full p-1"
                   type="text"
+                  value={nomeFunc}
+                  onChange={(e) => setNomeFunc(e.target.value)}
                   disabled={!ativo}
+                  required
                 />
               </label>
               <div>
@@ -70,11 +145,16 @@ const Funcionarios = () => {
                 </p>
                 <input
                   type="file"
+                  value={fileImg}
+                  required
                   accept="image/png,image/jpeg"
                   className="bg-blue-700  p-2 rounded-sm mt-2 
                             font-light text-xs text-white hover:bg-green-700"
                   disabled={!ativo}
-                  onChange={handleImagemChange}
+                  onChange={(e) => {
+                    handleImagemChange(e);
+                    setFileImg(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -83,6 +163,8 @@ const Funcionarios = () => {
               <input
                 className="border-solid border-b-2 outline-none w-full p-1"
                 type="date"
+                value={dataAdmisao}
+                onChange={(e) => setDataAdmisao(e.target.value)}
                 disabled={!ativo}
               />
             </label>
@@ -91,6 +173,9 @@ const Funcionarios = () => {
               <input
                 className="border-solid border-b-2 outline-none w-full p-1"
                 type="text"
+                required
+                value={cargoFunc}
+                onChange={(e) => setCargo(e.target.value)}
                 disabled={!ativo}
               />
             </label>
@@ -121,6 +206,8 @@ const Funcionarios = () => {
                   className="border-solid border-b-2 outline-none w-full p-1"
                   type="date"
                   disabled={ativo}
+                  value={demissao}
+                  onChange={(e) => setDemissao(e.target.value)}
                 />
               </label>
             ) : (
@@ -132,8 +219,11 @@ const Funcionarios = () => {
               <input
                 className="border-solid border-b-2 outline-none w-full p-1"
                 type="text"
+                required
                 placeholder="(xx) x xxxx-xxxx"
                 disabled={!ativo}
+                value={contatoFunc}
+                onChange={(e) => setContatoFunc(e.target.value)}
               />
             </label>
             <label className="w-full">
@@ -141,7 +231,10 @@ const Funcionarios = () => {
               <input
                 className="border-solid border-b-2 outline-none w-full p-1"
                 type="email"
+                required
                 disabled={!ativo}
+                value={emailFunc}
+                onChange={(e) => setEmailFunc(e.target.value)}
               />
             </label>
             <label className="w-full">
@@ -151,7 +244,8 @@ const Funcionarios = () => {
                 type="radio"
                 id="sexo-m"
                 name="sexo"
-                value="Masculino"
+                value={sexoM}
+                onChange={(e) => setSexoM(e.target.value)}
                 disabled={!ativo}
               />{" "}
               <span className="mr-3">Masculino</span>
@@ -160,7 +254,8 @@ const Funcionarios = () => {
                 type="radio"
                 id="sexo-f"
                 name="sexo"
-                value="feminino"
+                value={sexoF}
+                onChange={(e) => setSexoF(e.target.value)}
                 disabled={!ativo}
               />{" "}
               <span>Feminino</span>

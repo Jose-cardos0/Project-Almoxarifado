@@ -239,7 +239,7 @@ const Home = () => {
           <input type="text" placeholder="Digite o item procurado" />
           <button>🔍</button>
         </div>
-        <div className="w-full">
+        <div className="w-full shadow-lg">
           <table className="w-full table-auto">
             <tr className="bg-gray-400">
               <th className="w-2/6">Produto</th>
