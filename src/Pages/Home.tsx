@@ -18,7 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
-  const [nome, setNome] = useState<string>();
+  const [nome, setNome] = useState<string>("");
   const [desc, setDesc] = useState<string>();
   const [quantidade, setQuantidade] = useState<number>();
   const redAtention = useRef<HTMLInputElement>(null);
@@ -26,14 +26,22 @@ const Home = () => {
   const [dataId, setDataId] = useState<string>("");
   const [saida, setSaida] = useState<boolean>(false);
   const [saidaQuantidade, setSaidaQuant] = useState<number>();
-  const [saidaEntregue, setSaidaEntregue] = useState("");
-  const [saidaSetor, setSaidaSetor] = useState<string>("");
   const [saidaLiberadoPor, setSaidaLiberadoPor] = useState<string>("");
   const [codigoPedido, setCodigoPedido] = useState<string | number>();
   const [idItem, setIdItem] = useState<string>("");
   const [quantItem, setQuantItem] = useState<number>();
 
   const [data, setData] = useState<ProdutosProps[]>([]);
+  const [dataFuncionarios, setDataFuncionarios] = useState<FuncionariosProps[]>(
+    []
+  );
+  console.log(dataFuncionarios);
+
+  const [nomeSaida, setNomeSaida] = useState<string>("");
+  console.log(nomeSaida);
+
+  //BEMDITA IMAGEM
+  const [imgSaida, setImgSaida] = useState("");
 
   interface ProdutosProps {
     id: string;
@@ -41,6 +49,20 @@ const Home = () => {
     desc: string;
     quantidade: number;
   }
+
+  type FuncionariosProps = {
+    id: string;
+    ativo: string;
+    cargoFunc: string;
+    contatoFunc: string;
+    demissao: string;
+    emailFunc: string;
+    imagem: string;
+    inativo: string;
+    nomeFunc: string;
+    sexoF: string;
+    sexoM: string;
+  };
 
   async function getData() {
     const linksRef = collection(db, "produtos");
@@ -66,6 +88,38 @@ const Home = () => {
     getData();
   }, []);
 
+  async function getDataFunc() {
+    //aFUNCIONARIOS
+    const linksRef = collection(db, "Funcionario");
+    const queryRef = query(linksRef);
+
+    await getDocs(queryRef).then((snapshot) => {
+      let listaFuncionarios = [] as FuncionariosProps[];
+
+      snapshot.forEach((doc) => {
+        listaFuncionarios.push({
+          id: doc.id,
+          ativo: doc.data().ativo,
+          cargoFunc: doc.data().cargoFunc,
+          contatoFunc: doc.data().contatoFunc,
+          demissao: doc.data().demissao,
+          emailFunc: doc.data().emailFunc,
+          imagem: doc.data().imagem,
+          inativo: doc.data().inativo,
+          nomeFunc: doc.data().nomeFunc,
+          sexoF: doc.data().sexoF,
+          sexoM: doc.data().sexoM,
+        });
+      });
+
+      setDataFuncionarios(listaFuncionarios);
+    });
+  }
+
+  useEffect(() => {
+    getDataFunc();
+  }, []);
+
   async function handlesubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -84,6 +138,7 @@ const Home = () => {
         desc: desc,
         quantidade: quantidade,
       }).then(() => {
+        toast.success("Registrado com sucesso!");
         getData();
         setNome("");
         setDesc("");
@@ -120,26 +175,6 @@ const Home = () => {
     console.log(item.id);
   }
 
-  // async function handleSavedEdit() {
-  //   await updateDoc(doc(db, "produtos", dataId), {
-  //     nome: nome,
-  //     desc: desc,
-  //     quantidade: quantidade,
-  //   })
-  //     .then(() => {
-  //       alert("sucesso");
-  //       console.log(dataId);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.message);
-  //     });
-
-  //   setNome("");
-  //   setDesc("");
-  //   setQuantidade(0);
-  //   setDataId(""); // reset dataId
-  // }
-
   function handleExit(item: ProdutosProps) {
     setSaida(true);
     setNome(item.nome);
@@ -148,7 +183,15 @@ const Home = () => {
   }
 
   async function handleDelete(item: string) {
-    await deleteDoc(doc(db, "produtos", item));
+    await deleteDoc(doc(db, "produtos", item))
+      .then(() => {
+        toast.success("Item removido!");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Algo deu errado!");
+      });
+
     getData();
   }
 
@@ -248,8 +291,8 @@ const Home = () => {
             </tr>
             {data.map((item) => (
               <tr key={item.id} className="border-solid border-y-2">
-                <td className="text-center">{item.nome}</td>
-                <td className="text-center">{item.desc}</td>
+                <td className="text-center">{item.nome.toLocaleUpperCase()}</td>
+                <td className="text-center">{item.desc.toLocaleUpperCase()}</td>
                 <td className="text-center">
                   <div className="flex justify-end gap-2">
                     <p>
@@ -289,7 +332,7 @@ const Home = () => {
               saida === true ? "" : "hidden"
             } flex flex-col justify-center items-center  rounded-lg fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-60`}
           >
-            <div className="flex flex-col bg-blue-50 p-10 w-1/3">
+            <div className="flex flex-col bg-blue-50 p-10 w-1/3 h-2/3">
               <div className="flex items-center justify-between">
                 <p className="text-center font-bold">Painel de Saída</p>
                 <button
@@ -303,7 +346,32 @@ const Home = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmitSaida} className="flex flex-col">
+              <form
+                onSubmit={handleSubmitSaida}
+                className="flex flex-col min-h-min"
+              >
+                <p>Funcionário:</p>
+                <select
+                  className="flex flex-col mt-2"
+                  required
+                  value={nomeSaida}
+                  onChange={(e) => {
+                    setNomeSaida(e.target.value);
+                    const funcionario = dataFuncionarios.find(
+                      (item) => item.nomeFunc === e.target.value
+                    );
+                    if (funcionario) {
+                      setImgSaida(funcionario.imagem);
+                    }
+                  }}
+                >
+                  <option value="">Selecione um funcionário...</option>
+                  {dataFuncionarios.map((item) => (
+                    <option key={item.id}>
+                      {item.nomeFunc.toLocaleUpperCase()}
+                    </option>
+                  ))}
+                </select>
                 <label className="flex flex-col mt-2">
                   Quantidade:
                   <input
@@ -314,25 +382,6 @@ const Home = () => {
                     onChange={(e) => setSaidaQuant(Number(e.target.value))}
                   />
                 </label>
-
-                <label className="flex flex-col mt-2">
-                  Entregue a:
-                  <input
-                    className="border-solid border-b-2 outline-none"
-                    type="text"
-                    placeholder="Nome do funcionário."
-                    value={saidaEntregue}
-                    onChange={(e) => setSaidaEntregue(e.target.value)}
-                  />
-                  <input
-                    className="border-solid border-b-2 outline-none"
-                    type="text"
-                    placeholder="Setor"
-                    value={saidaSetor}
-                    onChange={(e) => setSaidaSetor(e.target.value)}
-                  />
-                </label>
-
                 <label className="flex flex-col mt-2">
                   Liberado por:
                   <input
@@ -340,7 +389,9 @@ const Home = () => {
                     type="text"
                     placeholder="Nome do coordenador responsável..."
                     value={saidaLiberadoPor}
-                    onChange={(e) => setSaidaLiberadoPor(e.target.value)}
+                    onChange={(e) =>
+                      setSaidaLiberadoPor(e.target.value.toLocaleUpperCase())
+                    }
                   />
                   <input
                     className="border-solid border-b-2 outline-none"
@@ -360,25 +411,39 @@ const Home = () => {
               </form>
 
               <div className="border-solid border-t-2 outline-none mt-5">
-                <p className="text-center font-bold">Relatório de saída:</p>
+                <div>
+                  <p className="text-center font-bold">Relatório de saída:</p>
 
-                <p>
-                  <strong>Nome:</strong> {saidaEntregue}
-                </p>
-                <p>
-                  <strong>Setor:</strong> {saidaSetor}
-                </p>
-                <p>
-                  <strong>Quantidade: </strong>
-                  {saidaQuantidade} <strong>Produto:</strong> {nome}
-                </p>
-                <p>
-                  <strong>Liberado por: </strong>
-                  {saidaLiberadoPor}
-                </p>
-                <p>
-                  <strong>Código:</strong> {codigoPedido}
-                </p>
+                  <p>
+                    <strong>Nome:</strong> {nomeSaida}
+                  </p>
+                  <p>
+                    <strong>Setor:</strong>
+                    {
+                      dataFuncionarios.find(
+                        (funcionario) => funcionario.nomeFunc === nomeSaida
+                      )?.cargoFunc
+                    }
+                  </p>
+                  <p>
+                    <strong>Quantidade: </strong>
+                    {saidaQuantidade} <strong>Produto:</strong>{" "}
+                    {nome.toLocaleUpperCase()}
+                  </p>
+                  <p>
+                    <strong>Liberado por: </strong>
+                    {saidaLiberadoPor.toLocaleUpperCase()}
+                  </p>
+                  <p>
+                    <strong>Código:</strong> {codigoPedido}
+                  </p>
+                </div>
+                {/* <div>
+                  {dataFuncionarios.find(
+                    (funcionario) => funcionario.nomeFunc === nomeSaida
+                  )?.imagem && <img src={imgSaida} alt="" />}
+                </div> */}
+                <div>{imgSaida && <img src={imgSaida} alt={nomeSaida} />}</div>
               </div>
             </div>
           </section>

@@ -13,13 +13,13 @@ const Funcionarios = () => {
   const [imagem, setImagem] = useState<string | null>(null);
 
   //inputs
-  const [nomeFunc, setNomeFunc] = useState<string>();
-  const [fileImg, setFileImg] = useState<any>();
-  const [dataAdmisao, setDataAdmisao] = useState<string>();
+  const [nomeFunc, setNomeFunc] = useState<string>("");
+  const [fileImg, setFileImg] = useState<File | any>();
+  const [dataAdmisao, setDataAdmisao] = useState<string>("");
   const [cargoFunc, setCargo] = useState<string>();
   const [ativoFunc, setAtivoFunc] = useState<boolean | string>("ativo");
   const [inativoFunc, setInativoFunc] = useState<boolean | string>("inativo");
-  const [contatoFunc, setContatoFunc] = useState<string>();
+  const [contatoFunc, setContatoFunc] = useState<string>("");
   const [emailFunc, setEmailFunc] = useState<string>();
   const [sexoF, setSexoF] = useState<string>("Feminino");
   const [sexoM, setSexoM] = useState<string>("Masculino");
@@ -107,7 +107,9 @@ const Funcionarios = () => {
                   className="border-solid border-b-2 outline-none w-full p-1"
                   type="text"
                   value={nomeFunc}
-                  onChange={(e) => setNomeFunc(e.target.value)}
+                  onChange={(e) =>
+                    setNomeFunc(e.target.value.toLocaleUpperCase())
+                  }
                   disabled={!ativo}
                   required
                 />
@@ -170,7 +172,7 @@ const Funcionarios = () => {
                 type="text"
                 required
                 value={cargoFunc}
-                onChange={(e) => setCargo(e.target.value)}
+                onChange={(e) => setCargo(e.target.value.toLocaleUpperCase())}
                 disabled={!ativo}
               />
             </label>
@@ -218,7 +220,9 @@ const Funcionarios = () => {
                 placeholder="(xx) x xxxx-xxxx"
                 disabled={!ativo}
                 value={contatoFunc}
-                onChange={(e) => setContatoFunc(e.target.value)}
+                onChange={(e) =>
+                  setContatoFunc(e.target.value.toLocaleUpperCase())
+                }
               />
             </label>
             <label className="w-full">
@@ -229,7 +233,9 @@ const Funcionarios = () => {
                 required
                 disabled={!ativo}
                 value={emailFunc}
-                onChange={(e) => setEmailFunc(e.target.value)}
+                onChange={(e) =>
+                  setEmailFunc(e.target.value.toLocaleUpperCase())
+                }
               />
             </label>
             <label className="w-full">
