@@ -1,5 +1,8 @@
 import { FormEvent, useState, useRef, useEffect } from "react";
 
+//componentes
+import { Historico } from "../Components/Historico";
+
 //firebase
 import { db } from "../FireBase/FireBase";
 
@@ -42,6 +45,7 @@ const Home = () => {
 
   //BEMDITA IMAGEM
   const [imgSaida, setImgSaida] = useState("");
+  console.log(imgSaida);
 
   interface ProdutosProps {
     id: string;
@@ -218,6 +222,20 @@ const Home = () => {
       toast.error("Erro ao atualizar quantidade");
       console.error(error);
     }
+  }
+
+  async function regSaida() {
+    await addDoc(collection(db, "Saidas"), {
+      nomeProduto: nome,
+      quantidadeSaida: saidaQuantidade,
+      data: new Date(),
+    })
+      .then(() => {
+        toast.success("Saida registrada!");
+      })
+      .catch(() => {
+        toast.error("Erro ao registrar saida!");
+      });
   }
 
   return (
@@ -405,6 +423,7 @@ const Home = () => {
                   type="submit"
                   className="bg-blue-700  p-2 rounded-sm mt-2
                             font-light text-xs text-white hover:bg-green-700"
+                  onChange={() => regSaida}
                 >
                   Registrar saída 📦
                 </button>
@@ -445,6 +464,7 @@ const Home = () => {
                 </div> */}
                 <div>{imgSaida && <img src={imgSaida} alt={nomeSaida} />}</div>
               </div>
+              <Historico />
             </div>
           </section>
         </div>
