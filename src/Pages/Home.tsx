@@ -33,19 +33,13 @@ const Home = () => {
   const [codigoPedido, setCodigoPedido] = useState<string | number>();
   const [idItem, setIdItem] = useState<string>("");
   const [quantItem, setQuantItem] = useState<number>();
-
   const [data, setData] = useState<ProdutosProps[]>([]);
   const [dataFuncionarios, setDataFuncionarios] = useState<FuncionariosProps[]>(
     []
   );
-  console.log(dataFuncionarios);
-
   const [nomeSaida, setNomeSaida] = useState<string>("");
-  console.log(nomeSaida);
-
   //BEMDITA IMAGEM
   const [imgSaida, setImgSaida] = useState("");
-  console.log(imgSaida);
 
   interface ProdutosProps {
     id: string;
@@ -218,6 +212,7 @@ const Home = () => {
       toast.success("Sucesso");
       setSaida(false);
       getData();
+      regSaida();
     } catch (error) {
       toast.error("Erro ao atualizar quantidade");
       console.error(error);
@@ -226,15 +221,20 @@ const Home = () => {
 
   async function regSaida() {
     await addDoc(collection(db, "Saidas"), {
+      //falta id
+      id: dataFuncionarios.find((item) => item.nomeFunc === nomeSaida)?.id,
+      nome: nomeSaida,
       nomeProduto: nome,
       quantidadeSaida: saidaQuantidade,
       data: new Date(),
     })
       .then(() => {
         toast.success("Saida registrada!");
+        console.log("SAIDA REGISTRADA");
       })
-      .catch(() => {
+      .catch((error) => {
         toast.error("Erro ao registrar saida!");
+        console.log(error);
       });
   }
 
@@ -423,7 +423,6 @@ const Home = () => {
                   type="submit"
                   className="bg-blue-700  p-2 rounded-sm mt-2
                             font-light text-xs text-white hover:bg-green-700"
-                  onChange={() => regSaida}
                 >
                   Registrar saída 📦
                 </button>
@@ -434,7 +433,7 @@ const Home = () => {
                   <p className="text-center font-bold">Relatório de saída:</p>
 
                   <p>
-                    <strong>Nome:</strong> {nomeSaida}
+                    <strong>Nome:</strong> {nomeSaida} <strong></strong>
                   </p>
                   <p>
                     <strong>Setor:</strong>
@@ -464,7 +463,9 @@ const Home = () => {
                 </div> */}
                 <div>{imgSaida && <img src={imgSaida} alt={nomeSaida} />}</div>
               </div>
-              <Historico />
+              {nomeSaida && nomeSaida.trim() !== "" && (
+                <Historico nomeSaida={nomeSaida} />
+              )}
             </div>
           </section>
         </div>
