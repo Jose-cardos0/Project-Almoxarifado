@@ -4,7 +4,7 @@ import { FormEvent, useState, useRef, useEffect } from "react";
 import { Historico } from "../Components/Historico";
 
 //firebase
-import { db } from "../FireBase/FireBase";
+import { db, storage } from "../FireBase/FireBase";
 
 import {
   addDoc,
@@ -15,6 +15,8 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
+
+import { getDownloadURL } from "firebase/storage";
 
 //toasts
 import { toast, ToastContainer } from "react-toastify";
@@ -219,6 +221,17 @@ const Home = () => {
     }
   }
 
+  async function getImagemFuncionario() {
+    const funcionario = dataFuncionarios.find(
+      (item) => item.nomeFunc === nomeSaida
+    );
+    if (funcionario) {
+      // const imagemUrl = await getDownloadURL(storage, funcionario.imagem);
+      // let imagemFinal = imagemUrl;
+      // setImgSaida(imagemFinal);
+    }
+  }
+
   async function regSaida() {
     await addDoc(collection(db, "Saidas"), {
       //falta id
@@ -381,6 +394,7 @@ const Home = () => {
                     if (funcionario) {
                       setImgSaida(funcionario.imagem);
                     }
+                    getImagemFuncionario();
                   }}
                 >
                   <option value="">Selecione um funcionário...</option>
