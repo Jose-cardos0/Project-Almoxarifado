@@ -3,14 +3,14 @@ import React, { FormEvent, useState } from "react";
 //firebase
 import { db, storage } from "../FireBase/FireBase";
 import { addDoc, collection } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadString } from "firebase/storage";
 
 //toast
 import { toast } from "react-toastify";
 
 const Funcionarios = () => {
   const [ativo, setAtivo] = useState(true);
-  const [imagem, setImagem] = useState<string | null>(null);
+  const [imagem, setImagem] = useState<any>();
 
   //inputs
   const [nomeFunc, setNomeFunc] = useState<string>("");
@@ -42,7 +42,8 @@ const Funcionarios = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setImagem(reader.result as string);
+        const base64String = reader.result as string;
+        setImagem(base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -64,29 +65,32 @@ const Funcionarios = () => {
     setEmailFunc("");
     setImagem(null);
 
-    const imagemRef = ref(storage, `imagens/${fileImg.name}`);
-    await uploadBytes(imagemRef, fileImg);
-    const imagemUrl = await getDownloadURL(imagemRef);
+    try {
+      const imagemRef = ref(storage, `imagens/${fileImg.nomeFunc}`);
+      await uploadString(imagemRef, imagem, "data_url");
 
-    await addDoc(collection(db, "Funcionario"), {
-      nomeFunc: nomeFunc,
-      cargoFunc: cargoFunc,
-      imagem: imagemUrl,
-      contatoFunc: contatoFunc,
-      emailFunc: emailFunc,
-      sexoF: sexoF,
-      sexoM: sexoM,
-      ativo: ativoFunc,
-      inativo: inativoFunc,
-      demissao: demissao,
-    })
-      .then(() => {
-        toast.success("Funcionário registrado com sucesso!");
+      await addDoc(collection(db, "Funcionario"), {
+        nomeFunc: nomeFunc,
+        cargoFunc: cargoFunc,
+        imagem: imagemRef.fullPath,
+        contatoFunc: contatoFunc,
+        emailFunc: emailFunc,
+        sexoF: sexoF,
+        sexoM: sexoM,
+        ativo: ativoFunc,
+        inativo: inativoFunc,
+        demissao: demissao,
       })
-      .catch((error) => {
-        toast.error("Erro ao registrar funcionário!");
-        console.log(error);
-      });
+        .then(() => {
+          toast.success("Funcionário registrado com sucesso!");
+        })
+        .catch((error) => {
+          toast.error("Erro ao registrar funcionário!");
+          console.log(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
