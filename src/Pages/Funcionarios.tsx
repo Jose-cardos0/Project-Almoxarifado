@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 //firebase
 import { db, storage } from "../FireBase/FireBase";
 import { addDoc, collection } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 //toast
 import { toast } from "react-toastify";
@@ -54,8 +54,13 @@ const Funcionarios = () => {
     setImagem(null);
   };
 
-  async function handleFuncionarioSubmit(e: FormEvent) {
-    e.preventDefault();
+  //tentativa de envio 1x
+  const [imgURL, setImgURL] = useState<string>("");
+  const [progressPorcent, setProgressPorcent] = useState<number>(0);
+  //fimtentativa
+
+  async function handleFuncionarioSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setNomeFunc("");
     setFileImg("");
     setDataAdmisao("");
@@ -66,28 +71,50 @@ const Funcionarios = () => {
     setImagem(null);
 
     try {
-      const imagemRef = ref(storage, `imagens/${fileImg.nomeFunc}`);
-      await uploadString(imagemRef, imagem, "data_url");
+      const fileInput = (event.target as HTMLFormElement).querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      const file = fileInput.files?.[0];
+      if (!file) return;
 
-      await addDoc(collection(db, "Funcionario"), {
-        nomeFunc: nomeFunc,
-        cargoFunc: cargoFunc,
-        imagem: imagemRef.fullPath,
-        contatoFunc: contatoFunc,
-        emailFunc: emailFunc,
-        sexoF: sexoF,
-        sexoM: sexoM,
-        ativo: ativoFunc,
-        inativo: inativoFunc,
-        demissao: demissao,
-      })
-        .then(() => {
-          toast.success("Funcionário registrado com sucesso!");
-        })
-        .catch((error) => {
-          toast.error("Erro ao registrar funcionário!");
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgressPorcent(progress);
+        },
+        (error) => {
           console.log(error);
-        });
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setImgURL(downloadURL);
+          await addDoc(collection(db, "Funcionario"), {
+            nomeFunc: nomeFunc,
+            cargoFunc: cargoFunc,
+            imagem: imgURL,
+            contatoFunc: contatoFunc,
+            emailFunc: emailFunc,
+            sexoF: sexoF,
+            sexoM: sexoM,
+            ativo: ativoFunc,
+            inativo: inativoFunc,
+            demissao: demissao,
+          })
+            .then(() => {
+              toast.success("Funcionário registrado com sucesso!");
+            })
+            .catch((error) => {
+              toast.error("Erro ao registrar funcionário!");
+              console.log(error);
+            });
+        }
+      );
     } catch (error) {
       console.error(error);
     }
@@ -146,6 +173,7 @@ const Funcionarios = () => {
                 </p>
                 <input
                   type="file"
+                  id="fileInput"
                   value={fileImg}
                   required
                   accept="image/png,image/jpeg"
@@ -157,6 +185,7 @@ const Funcionarios = () => {
                     setFileImg(e.target.value);
                   }}
                 />
+                {!imgURL && <p>{progressPorcent}%</p>}
               </div>
             </div>
             <label className="w-full">
