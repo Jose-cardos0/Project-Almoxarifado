@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 const Funcionarios = () => {
   const [ativo, setAtivo] = useState(true);
-  const [imagem, setImagem] = useState<any>();
+  const [imagem, setImagem] = useState<any>("");
 
   //inputs
   const [nomeFunc, setNomeFunc] = useState<string>("");
@@ -58,6 +58,7 @@ const Funcionarios = () => {
   const [imgURL, setImgURL] = useState<string>("");
   const [progressPorcent, setProgressPorcent] = useState<number>(0);
   //fimtentativa
+  console.log(imgURL);
 
   async function handleFuncionarioSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,12 +108,15 @@ const Funcionarios = () => {
             demissao: demissao,
           })
             .then(() => {
-              toast.success("Funcionário registrado com sucesso!");
+              toast.success("Funcionário registrado!");
+              console.log(imagem);
             })
             .catch((error) => {
               toast.error("Erro ao registrar funcionário!");
               console.log(error);
             });
+
+          toast.success("Funcionário registrado!");
         }
       );
     } catch (error) {

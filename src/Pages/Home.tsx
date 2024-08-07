@@ -4,7 +4,7 @@ import { FormEvent, useState, useRef, useEffect } from "react";
 import { Historico } from "../Components/Historico";
 
 //firebase
-import { db, storage } from "../FireBase/FireBase";
+import { db } from "../FireBase/FireBase";
 
 import {
   addDoc,
@@ -15,8 +15,6 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-
-import { getDownloadURL } from "firebase/storage";
 
 //toasts
 import { toast, ToastContainer } from "react-toastify";
@@ -215,6 +213,11 @@ const Home = () => {
       setSaida(false);
       getData();
       regSaida();
+      setNomeSaida("");
+      setImgSaida("");
+      setSaidaQuant(0);
+      setSaidaLiberadoPor("");
+      setCodigoPedido("");
     } catch (error) {
       toast.error("Erro ao atualizar quantidade");
       console.error(error);
@@ -226,9 +229,6 @@ const Home = () => {
       (item) => item.nomeFunc === nomeSaida
     );
     if (funcionario) {
-      // const imagemUrl = await getDownloadURL(storage, funcionario.imagem);
-      // let imagemFinal = imagemUrl;
-      // setImgSaida(imagemFinal);
     }
   }
 
@@ -363,7 +363,7 @@ const Home = () => {
               saida === true ? "" : "hidden"
             } flex flex-col justify-center items-center  rounded-lg fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-60`}
           >
-            <div className="flex flex-col bg-blue-50 p-10 w-1/3 h-2/3">
+            <div className="flex flex-col bg-blue-50 p-10 w-1/3 ">
               <div className="flex items-center justify-between">
                 <p className="text-center font-bold">Painel de Saída</p>
                 <button
@@ -426,7 +426,7 @@ const Home = () => {
                     }
                   />
                   <input
-                    className="border-solid border-b-2 outline-none"
+                    className="border-solid border-b-2 outline-none mt-2"
                     type="text"
                     placeholder="código do pedido."
                     value={codigoPedido}
@@ -442,15 +442,17 @@ const Home = () => {
                 </button>
               </form>
 
-              <div className="border-solid border-t-2 outline-none mt-5">
-                <div>
-                  <p className="text-center font-bold">Relatório de saída:</p>
+              <div className="border-solid border-t-2 outline-none mt-2 flex justify-between ">
+                <div className="flex flex-col justify-between w-full">
+                  <p className="text-center font-bold w-full">
+                    Relatório de saída
+                  </p>
 
                   <p>
                     <strong>Nome:</strong> {nomeSaida} <strong></strong>
                   </p>
                   <p>
-                    <strong>Setor:</strong>
+                    <strong>Setor: </strong>
                     {
                       dataFuncionarios.find(
                         (funcionario) => funcionario.nomeFunc === nomeSaida
@@ -458,9 +460,11 @@ const Home = () => {
                     }
                   </p>
                   <p>
-                    <strong>Quantidade: </strong>
-                    {saidaQuantidade} <strong>Produto:</strong>{" "}
-                    {nome.toLocaleUpperCase()}
+                    <strong>Qtd: </strong>
+                    {saidaQuantidade}
+                  </p>
+                  <p>
+                    <strong>Produto:</strong> {nome.toLocaleUpperCase()}
                   </p>
                   <p>
                     <strong>Liberado por: </strong>
@@ -470,16 +474,22 @@ const Home = () => {
                     <strong>Código:</strong> {codigoPedido}
                   </p>
                 </div>
-                {/* <div>
-                  {dataFuncionarios.find(
-                    (funcionario) => funcionario.nomeFunc === nomeSaida
-                  )?.imagem && <img src={imgSaida} alt="" />}
-                </div> */}
-                <div>{imgSaida && <img src={imgSaida} alt={nomeSaida} />}</div>
+
+                <div className="flex items-center justify-center ">
+                  {imgSaida && (
+                    <img
+                      className="w-40 h-40 shadow-lg"
+                      src={imgSaida}
+                      alt={nomeSaida}
+                    />
+                  )}
+                </div>
               </div>
-              {nomeSaida && nomeSaida.trim() !== "" && (
-                <Historico nomeSaida={nomeSaida} />
-              )}
+              <div className="mt-1">
+                {nomeSaida && nomeSaida.trim() !== "" && (
+                  <Historico nomeSaida={nomeSaida} />
+                )}
+              </div>
             </div>
           </section>
         </div>
