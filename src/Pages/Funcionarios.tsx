@@ -58,7 +58,6 @@ const Funcionarios = () => {
   const [imgURL, setImgURL] = useState<string>("");
   const [progressPorcent, setProgressPorcent] = useState<number>(0);
   //fimtentativa
-  console.log(imgURL);
 
   async function handleFuncionarioSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -94,11 +93,12 @@ const Funcionarios = () => {
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setImgURL(downloadURL);
+          setImagem(downloadURL);
+          console.log(imagem);
           await addDoc(collection(db, "Funcionario"), {
             nomeFunc: nomeFunc,
             cargoFunc: cargoFunc,
-            imagem: imgURL,
+            imagem: imagem,
             contatoFunc: contatoFunc,
             emailFunc: emailFunc,
             sexoF: sexoF,
@@ -189,7 +189,6 @@ const Funcionarios = () => {
                     setFileImg(e.target.value);
                   }}
                 />
-                {!imgURL && <p>{progressPorcent}%</p>}
               </div>
             </div>
             <label className="w-full">
