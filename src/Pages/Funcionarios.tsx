@@ -125,8 +125,14 @@ const Funcionarios = () => {
   }
 
   return (
-    <div className="flex justify-center items-center flex-col min-h-screen w-screen overflow-hidden">
-      <div className="flex flex-col h-auto w-3/6 m-auto items-center justify-center p-8 bg-blue-50 shadow-lg">
+    <div
+      className="flex justify-center items-center flex-col 
+    min-h-screen w-screen overflow-hidden max-md:w-max max-md:m-auto"
+    >
+      <div
+        className="flex flex-col h-auto w-3/6 m-auto items-center
+       justify-center p-8 bg-blue-50 shadow-lg max-md:w-11/12 "
+      >
         <h1 className="font-bold border-solid border-b-2 mb-2">
           Painel de registro
         </h1>
@@ -135,7 +141,7 @@ const Funcionarios = () => {
             onSubmit={handleFuncionarioSubmit}
             className="flex flex-col w-full "
           >
-            <div className="flex items-center justify-center gap-5">
+            <div className="flex items-center justify-center gap-5 max-md:flex max-md:flex-col">
               <label className="w-full">
                 Nome:
                 <input
@@ -149,12 +155,13 @@ const Funcionarios = () => {
                   required
                 />
               </label>
-              <div>
+              <div className="max-md:flex max-md:flex-col max-md:items-center">
                 <p
                   className={
                     imagem
                       ? ` h-40 flex items-center justify-center relative z-90`
-                      : `border-solid border-2 h-40 flex items-center justify-center relative z-90`
+                      : `border-solid border-2 h-40 flex items-center 
+                      justify-center relative z-90 max-md:h-30 max-md:w-3/4`
                   }
                 >
                   {imagem ? (
@@ -182,7 +189,7 @@ const Funcionarios = () => {
                   required
                   accept="image/png,image/jpeg"
                   className="bg-blue-700  p-2 rounded-sm mt-2 
-                            font-light text-xs text-white hover:bg-green-700"
+                            font-light text-xs text-white hover:bg-green-700 "
                   disabled={!ativo}
                   onChange={(e) => {
                     handleImagemChange(e);
@@ -274,28 +281,32 @@ const Funcionarios = () => {
                 }
               />
             </label>
-            <label className="w-full">
+            <label className="w-full max-md:flex max-md:flex-col">
               <p>Sexo:</p>
-              <input
-                className="border-solid border-b-2 outline-none"
-                type="radio"
-                id="sexo-m"
-                name="sexo"
-                value={sexoM}
-                onChange={(e) => setSexoM(e.target.value)}
-                disabled={!ativo}
-              />{" "}
-              <span className="mr-3">Masculino</span>
-              <input
-                className="border-solid border-b-2 outline-none"
-                type="radio"
-                id="sexo-f"
-                name="sexo"
-                value={sexoF}
-                onChange={(e) => setSexoF(e.target.value)}
-                disabled={!ativo}
-              />{" "}
-              <span>Feminino</span>
+              <div>
+                <input
+                  className="border-solid border-b-2 outline-none"
+                  type="radio"
+                  id="sexo-m"
+                  name="sexo"
+                  value={sexoM}
+                  onChange={(e) => setSexoM(e.target.value)}
+                  disabled={!ativo}
+                />{" "}
+                <span className="mr-3">Masculino</span>
+              </div>
+              <div>
+                <input
+                  className="border-solid border-b-2 outline-none"
+                  type="radio"
+                  id="sexo-f"
+                  name="sexo"
+                  value={sexoF}
+                  onChange={(e) => setSexoF(e.target.value)}
+                  disabled={!ativo}
+                />{" "}
+                <span>Feminino</span>
+              </div>
             </label>
             <button
               type="submit"

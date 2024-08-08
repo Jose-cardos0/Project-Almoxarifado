@@ -73,26 +73,36 @@ export function Historico({ nomeSaida }: PropsSaida) {
     <div className="bg-white h-full p-3">
       {listaDeSaidas?.map((item) => (
         <div
-          className="flex p-1 gap-1 justify-between items-center text-center max-w-full border-solid border-b-2"
+          className="flex p-1 gap-1 justify-between items-center 
+          text-center max-w-full border-solid border-b-2
+          max-md:flex max-md:flex-col"
           key={item.id}
         >
-          <div className="flex gap-1">
+          <div className="flex gap-1 max-md:flex ">
             <FcRight />
-            <p className="font-extralight">Nome do item:</p>
-            <p className="text-red-700 font-light italic">{item.nomeProd}</p>
+            <div>
+              <p className="font-extralight">Nome do item:</p>
+              <p className="text-red-700 font-light italic">{item.nomeProd}</p>
+            </div>
           </div>
           <div className="flex gap-1">
-            <p className="font-extralight">Data da saída:</p>
-            <p className="text-red-700 font-light italic">
-              {formatDate(item.data)}
-            </p>
+            <div>
+              <p className="font-extralight">Data da saída:</p>
+              <p className="text-red-700 font-light italic">
+                {formatDate(item.data)}
+              </p>
+            </div>
           </div>
-          <div className="flex gap-1">
-            <p className="font-extralight">Quantidade:</p>
-            <p className="text-red-700 font-light italic">{item.quantidade}</p>
-          </div>
-          <div>
-            <FcOk />
+          <div className="max-md:flex items-center justify-center gap-2">
+            <div className="flex gap-1">
+              <p className="font-extralight">Quantidade:</p>
+              <p className="text-red-700 font-light italic">
+                {item.quantidade}
+              </p>
+            </div>
+            <div>
+              <FcOk />
+            </div>
           </div>
         </div>
       ))}

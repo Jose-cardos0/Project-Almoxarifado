@@ -252,10 +252,13 @@ const Home = () => {
   }
 
   return (
-    <div className="flex w-full flex-col relative">
-      <div className="flex flex-col w-full m-auto items-center mb-10">
-        <h1>Entrada de Produtos</h1>
-        <form onSubmit={handlesubmit} className=" flex gap-5 ">
+    <div className="flex w-full flex-col relative max-md:flex max-md:flex-col max-md:w-screen">
+      <div className="flex flex-col w-full m-auto items-center mb-10 ">
+        <h1 className="max-md:my-4">Entrada de Produtos</h1>
+        <form
+          onSubmit={handlesubmit}
+          className=" flex gap-5 max-md:flex max-md:max-w-min max-md:flex-col max-md:h-auto max-md:m-auto"
+        >
           <span className="mr-1">Nome do produto:</span>
           <input
             className={`border-solid border-b-2 outline-none ${
@@ -313,8 +316,10 @@ const Home = () => {
           <input type="text" placeholder="Digite o item procurado" />
           <button>🔍</button>
         </div>
-        <div className="w-full shadow-lg">
-          <table className="w-full table-auto">
+        <div className="w-full shadow-lg max-md:items-center max-md:justify-center max-md:w-min">
+          {" "}
+          {/*div tabela*/}
+          <table className="w-full table-auto ">
             <tr className="bg-gray-400">
               <th className="w-2/6">Produto</th>
               <th className="w-2/6">Descrição</th>
@@ -322,10 +327,18 @@ const Home = () => {
             </tr>
             {data.map((item) => (
               <tr key={item.id} className="border-solid border-y-2">
-                <td className="text-center">{item.nome.toLocaleUpperCase()}</td>
-                <td className="text-center">{item.desc.toLocaleUpperCase()}</td>
-                <td className="text-center">
-                  <div className="flex justify-end gap-2">
+                <td className="text-center max-md:text-xs max-md:px-2 ">
+                  {item.nome.toLocaleUpperCase()}
+                </td>
+                <td className="text-center max-md:text-xs max-md:px-2">
+                  {item.desc.toLocaleUpperCase()}
+                </td>
+                <td className="text-center max-md:flex max-md:items-center max-md:justify-center">
+                  <div
+                    className="flex justify-end gap-2 max-md:flex max-md:flex-col max-md:w-min
+                  max-md:items-center
+                  "
+                  >
                     <p>
                       <span className="border-solid border-2 rounded-md px-3 ">
                         {item.quantidade}
@@ -363,8 +376,8 @@ const Home = () => {
               saida === true ? "" : "hidden"
             } flex flex-col justify-center items-center  rounded-lg fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-60`}
           >
-            <div className="flex flex-col bg-blue-50 p-10 w-1/3 ">
-              <div className="flex items-center justify-between">
+            <div className="flex flex-col bg-blue-50 p-10 w-1/3 max-md:w-min max-md:h-max">
+              <div className="flex items-center justify-between ">
                 <p className="text-center font-bold">Painel de Saída</p>
                 <button
                   onClick={() => {
@@ -379,7 +392,7 @@ const Home = () => {
 
               <form
                 onSubmit={handleSubmitSaida}
-                className="flex flex-col min-h-min"
+                className="flex flex-col min-h-min max-md:w-min "
               >
                 <p>Funcionário:</p>
                 <select
@@ -442,8 +455,11 @@ const Home = () => {
                 </button>
               </form>
 
-              <div className="border-solid border-t-2 outline-none mt-2 flex justify-between ">
-                <div className="flex flex-col justify-between w-full">
+              <div
+                className="border-solid border-t-2 outline-none mt-2 flex justify-between 
+               "
+              >
+                <div className="flex flex-col justify-between w-full  ">
                   <p className="text-center font-bold w-full">
                     Relatório de saída
                   </p>
@@ -475,10 +491,10 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-center ">
+                <div className="flex items-center justify-center max-md:my-2 ">
                   {imgSaida && (
                     <img
-                      className="w-40 h-40 shadow-lg"
+                      className="w-40 h-40 shadow-lg max-md:w-20 max-md:h-20"
                       src={imgSaida}
                       alt={nomeSaida}
                     />
