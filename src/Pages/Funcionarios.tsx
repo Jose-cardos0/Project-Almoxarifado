@@ -55,7 +55,6 @@ const Funcionarios = () => {
   };
 
   //tentativa de envio 1x
-  const [imgURL, setImgURL] = useState<string>("");
   const [progressPorcent, setProgressPorcent] = useState<number>(0);
   //fimtentativa
 
@@ -86,6 +85,7 @@ const Funcionarios = () => {
           const progress = Math.round(
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           );
+          progressPorcent;
           setProgressPorcent(progress);
         },
         (error) => {
