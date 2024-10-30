@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 
-//icons
-import { FcOk, FcRight } from "react-icons/fc";
-
 interface PropsSaida {
   id?: string;
   nomeSaida: string;
@@ -79,30 +76,28 @@ export function Historico({ nomeSaida }: PropsSaida) {
           key={item.id}
         >
           <div className="flex gap-1 max-md:flex ">
-            <FcRight />
-            <div>
-              <p className="font-extralight">Nome do item:</p>
+            &#9745;
+            <div className="flex max-md:flex-col">
+              <p className="font-extralight mr-1 max-md:mr-0">Nome do item:</p>
               <p className="text-red-700 font-light italic">{item.nomeProd}</p>
             </div>
           </div>
           <div className="flex gap-1">
-            <div>
-              <p className="font-extralight">Data da saída:</p>
+            <div className="flex max-md:flex-col">
+              <p className="font-extralight mr-1 max-md:mr-0">Saída:</p>
               <p className="text-red-700 font-light italic">
                 {formatDate(item.data)}
               </p>
             </div>
           </div>
-          <div className="max-md:flex items-center justify-center gap-2">
+          <div className="max-md:flex items-center justify-center gap-2 flex">
             <div className="flex gap-1">
-              <p className="font-extralight">Quantidade:</p>
+              <p className="font-extralight mr-1 max-md:mr-0">Quantidade:</p>
               <p className="text-red-700 font-light italic">
                 {item.quantidade}
               </p>
             </div>
-            <div>
-              <FcOk />
-            </div>
+            &#10004;
           </div>
         </div>
       ))}
