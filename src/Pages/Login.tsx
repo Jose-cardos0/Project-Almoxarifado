@@ -17,8 +17,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [login, setLogin] = useState<string>("");
-  const [password, setPassword] = useState("");
+  const [login, setLogin] = useState<string>("teste@teste.com");
+  const [password, setPassword] = useState("123456");
   const inputLogin = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
